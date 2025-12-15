@@ -50,7 +50,10 @@ export function Footer() {
                                 <MapPin className="w-5 h-5 mt-0.5 text-nature-light group-hover:text-nature-accent" />
                                 <span className="text-sm">
                                     Silent Valley <br />
-                                    Kodangal, Telengana, India
+                                    Baswayipalli, Devarakadra (Mandal),<br />
+                                    Mahabubnagar (District), <br />
+                                    Telangana <br />
+                                    India.
                                 </span>
                             </a>
 
