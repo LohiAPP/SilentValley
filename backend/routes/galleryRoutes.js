@@ -18,18 +18,34 @@ router.get('/', async (req, res) => {
   }
 });
 
-router.post('/', verifyToken, parser.single('image'), async (req, res) => {
+router.post('/', verifyToken, parser.array('images', 10), async (req, res) => {
   try {
     const { category, title } = req.body;
-    const imageUrl = req.file ? (req.file.path.startsWith('http') ? req.file.path : `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`) : req.body.image_url;
     
-    if (!imageUrl) return res.status(400).json({ error: 'Image is required' });
+    if (!req.files || req.files.length === 0) {
+      if (!req.body.image_url) {
+        return res.status(400).json({ error: 'At least one image is required' });
+      }
+      
+      const result = await pool.query(
+        'INSERT INTO gallery (image_url, category, title) VALUES ($1, $2, $3) RETURNING *',
+        [req.body.image_url, category || 'Uncategorized', title || '']
+      );
+      return res.status(201).json([result.rows[0]]);
+    }
 
-    const result = await pool.query(
-      'INSERT INTO gallery (image_url, category, title) VALUES ($1, $2, $3) RETURNING *',
-      [imageUrl, category || 'Uncategorized', title || '']
-    );
-    res.status(201).json(result.rows[0]);
+    const insertedImages = [];
+    
+    for (const file of req.files) {
+      const imageUrl = file.path.startsWith('http') ? file.path : `${req.protocol}://${req.get('host')}/uploads/${file.filename}`;
+      const result = await pool.query(
+        'INSERT INTO gallery (image_url, category, title) VALUES ($1, $2, $3) RETURNING *',
+        [imageUrl, category || 'Uncategorized', title || '']
+      );
+      insertedImages.push(result.rows[0]);
+    }
+    
+    res.status(201).json(insertedImages);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Server error' });

@@ -6,7 +6,7 @@ import { Trash2, UploadCloud, Loader2 } from 'lucide-react';
 
 export function AdminGalleryForm() {
   const [images, setImages] = useState<any[]>([]);
-  const [file, setFile] = useState<File | null>(null);
+  const [files, setFiles] = useState<File[]>([]);
   const [category, setCategory] = useState('Retreats');
   const [title, setTitle] = useState('');
   const [loading, setLoading] = useState(false);
@@ -31,12 +31,14 @@ export function AdminGalleryForm() {
 
   const handleUpload = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!file) return alert('Please select an image');
+    if (files.length === 0) return alert('Please select at least one image');
     
     setLoading(true);
     const token = localStorage.getItem('admin_token');
     const formData = new FormData();
-    formData.append('image', file);
+    files.forEach(file => {
+      formData.append('images', file);
+    });
     formData.append('category', category);
     formData.append('title', title);
 
@@ -47,8 +49,8 @@ export function AdminGalleryForm() {
           'Content-Type': 'multipart/form-data'
         }
       });
-      alert('Image uploaded successfully!');
-      setFile(null);
+      alert(`${files.length} image(s) uploaded successfully!`);
+      setFiles([]);
       setTitle('');
       fetchGallery();
     } catch (err) {
@@ -92,12 +94,12 @@ export function AdminGalleryForm() {
           </div>
           <div>
             <label className="block text-xs uppercase text-nature-light mb-2">Image File</label>
-            <input type="file" accept="image/*" onChange={e => setFile(e.target.files?.[0] || null)} className="w-full text-white file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:bg-nature-accent file:text-nature-deep file:font-bold hover:file:bg-white cursor-pointer" />
+            <input type="file" multiple accept="image/*" onChange={e => setFiles(Array.from(e.target.files || []))} className="w-full text-white file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:bg-nature-accent file:text-nature-deep file:font-bold hover:file:bg-white cursor-pointer" />
           </div>
           <div className="md:col-span-3">
             <button type="submit" disabled={loading} className="px-8 py-3 bg-nature-accent text-nature-deep font-bold rounded-full hover:bg-white transition-colors flex items-center w-max">
               {loading ? <Loader2 className="animate-spin w-5 h-5 mr-2" /> : <UploadCloud className="w-5 h-5 mr-2" />}
-              {loading ? 'Uploading...' : 'Upload to Gallery'}
+              {loading ? 'Uploading...' : files.length > 0 ? `Upload ${files.length} Image${files.length > 1 ? 's' : ''}` : 'Upload to Gallery'}
             </button>
           </div>
         </form>
