@@ -1,0 +1,25 @@
+# Dependencies
+node_modules/
+package-lock.json
+
+# Environment variables (CRITICAL)
+.env
+.env.*
+
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# Uploaded files
+uploads/
+!uploads/.gitkeep
+
+# IDEs and Editors
+.vscode/
+.idea/
+*.swp
+
+# OS Files
+.DS_Store
+Thumbs.db

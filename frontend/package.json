@@ -9,15 +9,21 @@
     "lint": "eslint"
   },
   "dependencies": {
-    "next": "16.0.10",
+    "axios": "^1.15.2",
+    "framer-motion": "^12.23.26",
+    "lucide-react": "^0.561.0",
+    "next": "^16.2.4",
+    "pg": "^8.20.0",
     "react": "19.2.1",
     "react-dom": "19.2.1"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
+    "@types/pg": "^8.20.0",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "baseline-browser-mapping": "^2.10.23",
     "eslint": "^9",
     "eslint-config-next": "16.0.10",
     "tailwindcss": "^4",
